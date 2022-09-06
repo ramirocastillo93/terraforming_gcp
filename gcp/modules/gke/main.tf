@@ -5,8 +5,8 @@ resource "google_container_cluster" "primary" {
   remove_default_node_pool = true
   initial_node_count       = 1
 
-  network    = google_compute_network.vpc.name
-  subnetwork = google_compute_subnetwork.subnet.name
+  network    = gcp_vpc.name
+  subnetwork = gcp_subnet.name
 }
 
 resource "google_container_node_pool" "primary_nodes" {
