@@ -15,3 +15,9 @@ variable "gke_num_nodes" {
   description = "Number of GKE nodes"
   type        = "number"
 }
+
+variable "is_preemtible" {
+  default     = ""
+  description = "Boolean variable for setting preemtible machines or not on GKE cluster"
+  type        = "boolean"
+}
