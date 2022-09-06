@@ -13,11 +13,23 @@ variable "region" {
 variable "gke_num_nodes" {
   default     = ""
   description = "Number of GKE nodes"
-  type        = "number"
+  type        = number
 }
 
-variable "is_preemtible" {
+variable "gke_preemtible" {
   default     = ""
   description = "Boolean variable for setting preemtible machines or not on GKE cluster"
-  type        = "boolean"
+  type        = bool
+}
+
+variable "gke_machine_type" {
+  default     = ""
+  description = "GKE machine type"
+  type        = string
+}
+
+variable "gke_subnet_ip_cidr_range" {
+  default     = ""
+  description = "ip cidr range for gcp subnet"
+  type        = string
 }

@@ -1,6 +1,5 @@
 output "gcp_vpc" {
   value = google_compute_network.vpc
-
   # precondition {
 
   # }

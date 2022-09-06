@@ -26,8 +26,8 @@ resource "google_container_node_pool" "primary_nodes" {
       terraform = true
     }
 
-    preemptible  = var.is_preemtible
-    machine_type = "n1-standard-1"
+    preemptible  = var.gke_preemtible
+    machine_type = var.gke_machine_type
     tags = [
       "gke_node",
       "${var.project_id}-gke"
