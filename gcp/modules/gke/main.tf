@@ -1,12 +1,36 @@
 # GKE Cluster
+module "gcp_network" {
+  source = "../vpc"
+}
+
 resource "google_container_cluster" "primary" {
   name                     = "${var.project_id}-gke"
   location                 = var.region
   remove_default_node_pool = true
   initial_node_count       = 1
 
-  network    = gcp_vpc.name
-  subnetwork = gcp_subnet.name
+  network    = module.gcp_network.gcp_vpc.name
+  subnetwork = module.gcp_network.gcp_subnet.name
+
+  cluster_autoscaling {
+    enabled = var.gke_cluster_autoscaling.enabled
+    resource_limits {
+      resource_type = "cpu"
+      minimum       = var.gke_cluster_autoscaling.cpu_minimum
+      maximum       = var.gke_cluster_autoscaling.cpu_maximum
+    }
+    resource_limits {
+      resource_type = "memory"
+      minimum       = var.gke_cluster_autoscaling.memory_minimum
+      maximum       = var.gke_cluster_autoscaling.memory_maximum
+    }
+  }
+
+  addons_config {
+    horizontal_pod_autoscaling {
+      disabled = var.gke_disabled_hpa
+    }
+  }
 }
 
 resource "google_container_node_pool" "primary_nodes" {
