@@ -10,7 +10,8 @@ module "gke" {
 }
 
 module "gke_vpc" {
-  source     = "../modules/vpc"
-  project_id = var.project_id
-  region     = var.region
+  source                   = "../modules/vpc"
+  project_id               = var.project_id
+  region                   = var.region
+  gke_subnet_ip_cidr_range = var.gke_subnet_ip_cidr_range
 }

@@ -11,7 +11,7 @@ variable "region" {
 }
 
 variable "gke_subnet_ip_cidr_range" {
-  default     = ""
+  default     = "10.51.0.0/20"
   description = "ip cidr range for gcp subnet"
   type        = string
 }

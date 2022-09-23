@@ -1,13 +1,15 @@
 # VPC
 resource "google_compute_network" "vpc" {
-  name                    = "${var.project_id}-vpc"
+  name                    = "${var.project_id}vpc"
   auto_create_subnetworks = "false"
+  project                 = var.project_id
 }
 
 # Subnet
 resource "google_compute_subnetwork" "subnet" {
-  name          = "${var.project_id}-subnet"
+  name          = "${var.project_id}subnet"
   region        = var.region
   network       = google_compute_network.vpc.name
-  ip_cidr_range = var.gke_subnet_ip_cidr_range
+  # ip_cidr_range = "cidrsubnet(${var.gke_subnet_ip_cidr_range},4,3)"
+  ip_cidr_range = cidrsubnet("10.2.0.0/20", 3, 0)
 }
