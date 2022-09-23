@@ -1,16 +1,12 @@
 # GKE Cluster
-module "gcp_network" {
-  source = "../vpc"
-}
-
 resource "google_container_cluster" "primary" {
-  name                     = "${var.project_id}-gke"
+  name                     = "${var.cluster_name}-${var.env_name}"
   location                 = var.region
   remove_default_node_pool = true
   initial_node_count       = 1
 
-  network    = module.gcp_network.gcp_vpc.name
-  subnetwork = module.gcp_network.gcp_subnet.name
+  network    = var.network
+  subnetwork = var.subnetwork
 
   cluster_autoscaling {
     enabled = var.gke_cluster_autoscaling.enabled
@@ -46,7 +42,7 @@ resource "google_container_node_pool" "primary_nodes" {
     ]
 
     labels = {
-      env       = var.project_id
+      env       = var.env_name
       terraform = true
     }
 
@@ -54,7 +50,7 @@ resource "google_container_node_pool" "primary_nodes" {
     machine_type = var.gke_machine_type
     tags = [
       "gke-node",
-      "${var.project_id}-gke"
+      "${var.cluster_name}-${var.env_name}"
     ]
     metadata = {
       disable-legacy-endpoints = "true"
