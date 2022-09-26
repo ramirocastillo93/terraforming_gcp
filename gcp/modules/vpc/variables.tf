@@ -12,6 +12,22 @@ variable "region" {
 
 variable "gke_subnet_ip_cidr_range" {
   default     = ""
-  description = "ip cidr range for gcp subnet"
+  description = "IP CIDR range for GCP Subnet"
+  type        = string
+}
+
+variable "env_name" {
+  description = "The environment for the GKE cluster"
+  default     = "dev"
+  type        = string
+}
+
+variable "network" {
+  description = "The VPC network created to host the cluster in"
+  default     = "gke-network"
+}
+variable "subnetwork" {
+  description = "The subnetwork created to host the cluster in"
+  default     = "gke-subnet"
   type        = string
 }

@@ -1,13 +1,7 @@
-output "gcp_vpc" {
-  value = google_compute_network.vpc
-  # precondition {
-
-  # }
+output "gcp_vpc_name" {
+  value = google_compute_network.vpc.name
 }
 
-output "gcp_subnet" {
-  value = google_compute_subnetwork.subnet
-  # precondition {
-
-  # }
+output "gcp_subnet_name" {
+  value = google_compute_subnetwork.subnet.name
 }
