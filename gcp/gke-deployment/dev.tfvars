@@ -2,9 +2,12 @@ project_id = "developing-stuff"
 
 region = "us-east4"
 
-gke_num_nodes = 1
+gke_num_nodes = {
+  max = 2
+  min = 1
+}
 
-gke_preemtible = true
+gke_preemptible = true
 
 gke_machine_type = "n1-standard-1"
 
@@ -24,3 +27,6 @@ env_name = "dev"
 
 cluster_name = "onlineboutique"
 
+ip_range_pods_name = "ip-range-pods-name"
+
+ip_range_services_name = "ip-range-services-name"

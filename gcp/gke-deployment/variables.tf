@@ -6,17 +6,23 @@ variable "project_id" {
 
 variable "region" {
   default     = ""
-  description = "GCP project region"
+  description = "GCP region"
   type        = string
 }
 
 variable "gke_num_nodes" {
-  default     = 2
-  description = "Number of GKE Nodes"
-  type        = number
+  default = {
+    min = 1
+    max = 2
+  }
+  description = "Number of GKE nodes"
+  type = object({
+    min = number
+    max = number
+  })
 }
 
-variable "gke_preemtible" {
+variable "gke_preemptible" {
   default     = true
   description = "Boolean variable for setting preemtible machines or not on GKE cluster"
   type        = bool
@@ -29,8 +35,14 @@ variable "gke_machine_type" {
 }
 
 variable "gke_disabled_hpa" {
-  default     = false
+  default     = true
   description = "Boolean. Is HPA disabled?"
+  type        = bool
+}
+
+variable "gke_disabled_vpa" {
+  default     = true
+  description = "Boolean. Is VPA disabled?"
   type        = bool
 }
 
@@ -52,6 +64,12 @@ variable "gke_cluster_autoscaling" {
   })
 }
 
+variable "gke_subnet_ip_cidr_range" {
+  default     = ""
+  description = "ip cidr range for gcp subnet"
+  type        = string
+}
+
 variable "cluster_name" {
   description = "The name for the GKE cluster"
   type        = string
@@ -71,5 +89,17 @@ variable "network" {
 variable "subnetwork" {
   description = "The subnetwork created to host the cluster in"
   default     = "gke-subnet"
+  type        = string
+}
+
+variable "ip_range_pods_name" {
+  description = "Name of the IP range pods name"
+  default     = "ip_range_pods_name"
+  type        = string
+}
+
+variable "ip_range_services_name" {
+  description = "Name of the IP services pods name"
+  default     = "ip_range_services_name"
   type        = string
 }
