@@ -4,6 +4,8 @@
 Welcome to all fellow readers trying to deploy a GKE cluster using Terraform! Here you will find a quick guide on how to properly deploy said cluster using Terraform best practices and existing Terraform modules created by Google itself.
 Of course, some basic knowledge about Terraform is expected as this article isn't going to explain what Terraform is but it certainly will detail which commands to run in order to deploy what we want in the way we want to.
 
+In this case, we will deploy an Online Boutique store.
+
 ## Key Topics
 - `Google Cloud Platform`
     - GCP is a Public Cloud when we will deploy the Kubernetes Cluster with all the other resources needed to be functional.
@@ -135,3 +137,56 @@ As you can see, Terraform added 12 new resources to GCP. Those new resources are
 
 Notice that after you run this command a new file called `kubeconfig-{env}` is created containing the credentials to the cluster.
 
+
+# Terraform Modules 
+<!-- BEGIN_TF_DOCS -->
+## Requirements
+
+| Name | Version |
+|------|---------|
+| <a name="requirement_google"></a> [google](#requirement\_google) | 4.34.0 |
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| <a name="provider_local"></a> [local](#provider\_local) | 2.2.3 |
+
+## Modules
+
+| Name | Source | Version |
+|------|--------|---------|
+| <a name="module_gke"></a> [gke](#module\_gke) | terraform-google-modules/kubernetes-engine/google//modules/private-cluster | = 23.1.0 |
+| <a name="module_gke_auth"></a> [gke\_auth](#module\_gke\_auth) | terraform-google-modules/kubernetes-engine/google//modules/auth | n/a |
+| <a name="module_gke_vpc"></a> [gke\_vpc](#module\_gke\_vpc) | terraform-google-modules/network/google | ~> 4.0 |
+
+## Resources
+
+| Name | Type |
+|------|------|
+| [local_file.kubeconfig](https://registry.terraform.io/providers/hashicorp/local/latest/docs/resources/file) | resource |
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | The name for the GKE cluster | `string` | n/a | yes |
+| <a name="input_env_name"></a> [env\_name](#input\_env\_name) | The environment for the GKE cluster | `string` | `"dev"` | no |
+| <a name="input_gke_cluster_autoscaling"></a> [gke\_cluster\_autoscaling](#input\_gke\_cluster\_autoscaling) | Object with information for enabling GKE cluster autoscaling | <pre>object({<br>    enabled        = bool<br>    cpu_minimum    = number<br>    cpu_maximum    = number<br>    memory_minimum = number<br>    memory_maximum = number<br>  })</pre> | <pre>{<br>  "cpu_maximum": 4,<br>  "cpu_minimum": 2,<br>  "enabled": true,<br>  "memory_maximum": 16,<br>  "memory_minimum": 4<br>}</pre> | no |
+| <a name="input_gke_disabled_hpa"></a> [gke\_disabled\_hpa](#input\_gke\_disabled\_hpa) | Boolean. Is HPA disabled? | `bool` | `true` | no |
+| <a name="input_gke_disabled_vpa"></a> [gke\_disabled\_vpa](#input\_gke\_disabled\_vpa) | Boolean. Is VPA disabled? | `bool` | `true` | no |
+| <a name="input_gke_machine_type"></a> [gke\_machine\_type](#input\_gke\_machine\_type) | GKE machine type | `string` | `""` | no |
+| <a name="input_gke_num_nodes"></a> [gke\_num\_nodes](#input\_gke\_num\_nodes) | Number of GKE nodes | <pre>object({<br>    min = number<br>    max = number<br>  })</pre> | <pre>{<br>  "max": 2,<br>  "min": 1<br>}</pre> | no |
+| <a name="input_gke_preemptible"></a> [gke\_preemptible](#input\_gke\_preemptible) | Boolean variable for setting preemtible machines or not on GKE cluster | `bool` | `true` | no |
+| <a name="input_gke_subnet_ip_cidr_range"></a> [gke\_subnet\_ip\_cidr\_range](#input\_gke\_subnet\_ip\_cidr\_range) | ip cidr range for gcp subnet | `string` | `""` | no |
+| <a name="input_ip_range_pods_name"></a> [ip\_range\_pods\_name](#input\_ip\_range\_pods\_name) | Name of the IP range pods name | `string` | `"ip_range_pods_name"` | no |
+| <a name="input_ip_range_services_name"></a> [ip\_range\_services\_name](#input\_ip\_range\_services\_name) | Name of the IP services pods name | `string` | `"ip_range_services_name"` | no |
+| <a name="input_network"></a> [network](#input\_network) | The VPC network created to host the cluster in | `string` | `"gke-network"` | no |
+| <a name="input_project_id"></a> [project\_id](#input\_project\_id) | GCP project id | `string` | `""` | no |
+| <a name="input_region"></a> [region](#input\_region) | GCP region | `string` | `""` | no |
+| <a name="input_subnetwork"></a> [subnetwork](#input\_subnetwork) | The subnetwork created to host the cluster in | `string` | `"gke-subnet"` | no |
+
+## Outputs
+
+No outputs.
+<!-- END_TF_DOCS -->
