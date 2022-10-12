@@ -18,7 +18,28 @@ Of course, some basic knowledge about Terraform is expected as this article isn'
 ## Provision GKE cluster with Terraform
 
 ### GCP account set up
-Lorem ipsum dolor sit amet.
+The firs step of this journey is to set up Google Cloud SDK on your computer (or whatever machine you are using). This SDK has all the resources and tools Terraform will need to perform all the tasks you want. 
+
+Please follow this instructions in order to install it: https://cloud.google.com/sdk/docs/install
+
+Next, run these commands to check everything is working fine:
+```
+gcloud --version
+gcloud init
+```
+This will prompt a page when you will have to login into your GCP account credentials.
+
+After that please run
+```
+gcloud auth application-default login
+```
+
+Now we should enable all the APIs that GCP will use in order to allow Terraform to create what is needed:
+```
+gcloud components update
+gcloud services enable compute.googleapis.com
+gcloud services enable container.googleapis.com
+```
 
 ### Provisioning a cluster with Terraform
 ### Create dev GKE cluster
