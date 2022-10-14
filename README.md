@@ -6,6 +6,16 @@ Of course, some basic knowledge about Terraform is expected as this article isn'
 
 In this case, we will deploy an Online Boutique store.
 
+We will be deploying three main Terraform modules that will provision the resources that we want in order to make the Online Boutique store functioning properly:
+- [`GKE Module`](https://github.com/terraform-google-modules/terraform-google-kubernetes-engine#terraform-kubernetes-engine-module)
+    - Module to create a GKE cluster and the Node Pools. It will allow us to enable cluster autoscaling, HPA y VPA. 
+- [`GCP VPC`](https://github.com/terraform-google-modules/terraform-google-network#terraform-network-module)
+    - This module makes it easy to set up a new VPC Network in GCP by defining your network and subnet ranges in a concise syntax.
+- [`GKE Auth`](https://github.com/terraform-google-modules/terraform-google-kubernetes-engine/tree/master/modules/auth#terraform-kubernetes-engine-auth-module)
+    - This module allows configuring authentication to a GKE cluster using an OpenID Connect token retrieved from GCP as a kubeconfig file or as outputs intended for use with the kubernetes / helm providers.
+    This module retrieves a token for the account configured with the google provider as the Terraform runner using the provider's credentials, access_token, or other means of authentication.
+
+
 ## Key Topics
 - `Google Cloud Platform`
     - GCP is a Public Cloud when we will deploy the Kubernetes Cluster with all the other resources needed to be functional.
@@ -137,6 +147,20 @@ As you can see, Terraform added 12 new resources to GCP. Those new resources are
 
 Notice that after you run this command a new file called `kubeconfig-{env}` is created containing the credentials to the cluster.
 
+# Directory Tree
+```
+├── LICENSE
+├── README.md
+└── gcp
+    └── gke-deployment
+        ├── dev.tfvars
+        ├── dev_output.json
+        ├── main.tf
+        ├── prod.tfvars
+        ├── providers.tf
+        ├── variables.tf
+        └── version.tf
+```
 
 # Terraform Modules 
 <!-- BEGIN_TF_DOCS -->
