@@ -27,7 +27,7 @@ jobs:
         uses: hashicorp/setup-terraform@v1
 
       - name: TF Init
-        run: terraform init -chdir=../../gcp/gke-deployent
+        run: terraform init -chdir=gcp/gke-deployment
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
@@ -41,6 +41,6 @@ jobs:
       
       - name: TF Apply
         if: github.ref == 'refs/head/main' && github.event_name == 'pull_request'
-        run: terraform apply -chdir=gcp/gke-deployent -auto-approve 
+        run: terraform apply -chdir=gcp/gke-deployment -auto-approve 
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
