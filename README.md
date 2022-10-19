@@ -1,8 +1,9 @@
 # Terraforming_GCP
 
 ## Description
-Welcome to all fellow readers trying to deploy a GKE cluster using Terraform! Here you will find a quick guide on how to properly deploy said cluster using Terraform best practices and existing Terraform modules created by Google itself.
-Of course, some basic knowledge about Terraform is expected as this article isn't going to explain what Terraform is but it certainly will detail which commands to run in order to deploy what we want in the way we want to.
+Welcome to all fellow readers trying to deploy a GKE cluster using Terraform! Here you will find a quick guide on how to properly deploy said cluster using Terraform best practices and existing Terraform modules created by Google itself using Github Actions as the CI/CD platform.
+
+Of course, some basic knowledge about Terraform and CI/CD is expected as this article isn't going to explain what these technologies are in detail but it certainly will detail which commands to run in order to deploy what we want in the way we want to.
 
 We will be deploying three main Terraform modules that will provision the resources that we want in order to make the Online Boutique store functioning properly:
 - [`GKE Module`](https://github.com/terraform-google-modules/terraform-google-kubernetes-engine#terraform-kubernetes-engine-module)
@@ -229,3 +230,33 @@ export KUBE_CONFIG_PATH=./kubeconfig-dev # Please write the complete directory
 
 No outputs.
 <!-- END_TF_DOCS -->
+
+
+# Github Actions
+Github Actions is a continuous integration and continuous delivery (CI/CD) platform that allows you to automate your build, test and deployment pipeline with every push or pull request to your repository.
+
+If you want to lear more about it, [check this link out ](https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions).
+
+## First Step
+We will be creating a new folder called `.github` with a subfolder in it called `workflows`. Inside of it we will create a new file called `main.yaml` that will have all the configurations to run the CI/CD pipeline.
+
+Remember that if you don't create this folder, Github will have no idea that there is a plan to use its Actions.
+
+Next, you'll have to create a service account and download its key in order to use it as a secret and give the pipeline the correct credentials. If you don't, Terraform will not be able to do its magic.
+
+## Tree
+```
+.github
+└── workflows
+    └── main.yaml
+```
+
+## Explanation of main.yaml
+This file contains the configuration so the CI/CD tool will deploy (in this case) the GKE cluster on your GCP project. 
+
+It will run on every push done to the branch `main` and branches starting with `feature` and `hotfix`. For example, a branch called `feature/githubs-actions` will trigger the pipeline, but a branch called `development` won't. 
+
+It will run on every pull request done to your `main` branch with changes within the directory `gcp/gke-deployment`. 
+
+
+
