@@ -35,12 +35,12 @@ jobs:
         run: terraform -chdir=gcp/gke-deployment fmt -recursive -check 
 
       - name: TF Plan
-        run: terraform -chdir=gcp/gke-deployment plan
+        run: terraform -chdir=gcp/gke-deployment plan -var-file=prod.tfvars -out=tfplan
         env: 
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
       
       - name: TF Apply
         if: github.ref == 'refs/head/main' && github.event_name == 'pull_request'
-        run: terraform apply -chdir=gcp/gke-deployment -auto-approve 
+        run: terraform -chdir=gcp/gke-deployment apply -auto-approve tfplan
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
