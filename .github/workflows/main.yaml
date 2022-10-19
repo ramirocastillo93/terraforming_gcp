@@ -27,7 +27,7 @@ jobs:
         uses: hashicorp/setup-terraform@v1
 
       - name: TF Init
-        run: terraform init -chdir=gcp/gke-deployent
+        run: terraform init -chdir=../../gcp/gke-deployent
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
