@@ -1,7 +1,7 @@
 name: "Deploying GKE with Terraform"
 
 on:
-  commit:
+  push:
     branches:
       - main
       - 'feature/*'
