@@ -9,11 +9,12 @@ on:
   pull_request:
     branches:
       - main
+      - feature
     paths:
       - 'gcp/gke-deployment/*'
 
 jobs:
-  terraform:
+  terraform-plan:
     name: "Terraform"
     runs-on: ubuntu-latest
 
@@ -47,7 +48,7 @@ jobs:
       #     retention-days: 1
 
       - name: TF Apply
-        if: github.ref == 'refs/head/main' && github.event_name == 'pull_request'
+        # if: github.ref == 'refs/head/main' && github.event_name == 'pull_request'
         run: terraform -chdir=gcp/gke-deployment apply -auto-approve tfplan
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
