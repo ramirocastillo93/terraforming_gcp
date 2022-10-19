@@ -32,10 +32,10 @@ jobs:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
       - name: TF FMT
-        run: terraform fmt -chdir=gcp/gke-deployment -recursive -check 
+        run: terraform -chdir=gcp/gke-deployment fmt -recursive -check 
 
       - name: TF Plan
-        run: terraform plan -chdir=gcp/gke-deployment
+        run: terraform -chdir=gcp/gke-deployment plan
         env: 
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
       
