@@ -1,0 +1,40 @@
+name: "Deploying GKE with Terraform"
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  terraform:
+    name: "Terraform"
+    runs-on: ubuntu-latest
+
+    steps:
+      # This step will allow the workflow to use a copy of the repository's code.
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      # This step will install all the TF dependencies in order to properly run this workflow.
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: TF Init
+        run: terraform init
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+
+      - name: TF FMT
+        run: terraform fmt -recursive -check
+
+      - name: TF Plan
+        run: terraform plan
+        env: 
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+      
+      - name: TF Apply
+        if: github.ref == "refs/head/main" && github.event_name == "push"
+        run: terraform apply -auto-approve
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
