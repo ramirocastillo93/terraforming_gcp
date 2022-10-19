@@ -4,8 +4,6 @@
 Welcome to all fellow readers trying to deploy a GKE cluster using Terraform! Here you will find a quick guide on how to properly deploy said cluster using Terraform best practices and existing Terraform modules created by Google itself.
 Of course, some basic knowledge about Terraform is expected as this article isn't going to explain what Terraform is but it certainly will detail which commands to run in order to deploy what we want in the way we want to.
 
-In this case, we will deploy an Online Boutique store.
-
 We will be deploying three main Terraform modules that will provision the resources that we want in order to make the Online Boutique store functioning properly:
 - [`GKE Module`](https://github.com/terraform-google-modules/terraform-google-kubernetes-engine#terraform-kubernetes-engine-module)
     - Module to create a GKE cluster and the Node Pools. It will allow us to enable cluster autoscaling, HPA y VPA. 
@@ -146,6 +144,23 @@ Apply complete! Resources: 12 added, 0 changed, 0 destroyed.
 As you can see, Terraform added 12 new resources to GCP. Those new resources are the ones in the `main.tf` file. 
 
 Notice that after you run this command a new file called `kubeconfig-{env}` is created containing the credentials to the cluster.
+
+```
+gcloud container clusters get-credentials onlineboutique-dev --region us-east4 --project developing-stuff
+```
+
+You'll see something like this
+```
+Fetching cluster endpoint and auth data.
+CRITICAL: ACTION REQUIRED: gke-gcloud-auth-plugin, which is needed for continued use of kubectl, was not found or is not executable. Install gke-gcloud-auth-plugin for use with kubectl by following https://cloud.google.com/blog/products/containers-kubernetes/kubectl-auth-changes-in-gke
+kubeconfig entry generated for onlineboutique-dev.
+```
+
+Then export the kubeconfig file:
+```
+export KUBECONFIG=./kubeconfig-dev # Please write the complete directory
+export KUBE_CONFIG_PATH=./kubeconfig-dev # Please write the complete directory
+```
 
 # Directory Tree
 ```

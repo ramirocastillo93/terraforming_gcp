@@ -35,6 +35,9 @@ module "gke" {
     }
   ]
 
+  depends_on = [
+    module.gke_vpc
+  ]
 }
 
 # Create a VPC
