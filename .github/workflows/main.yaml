@@ -39,6 +39,13 @@ jobs:
         env: 
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
       
+      # - name: Upload Artifact TFPLAN
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: tfplan
+      #     path: ./tfplan
+      #     retention-days: 1
+
       - name: TF Apply
         if: github.ref == 'refs/head/main' && github.event_name == 'pull_request'
         run: terraform -chdir=gcp/gke-deployment apply -auto-approve tfplan
