@@ -27,20 +27,20 @@ jobs:
         uses: hashicorp/setup-terraform@v1
 
       - name: TF Init
-        run: terraform init
+        run: terraform init -chdir=gcp/gke-deployent
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
       - name: TF FMT
-        run: terraform fmt -recursive -check
+        run: terraform fmt -chdir=gcp/gke-deployent -recursive -check 
 
       - name: TF Plan
-        run: terraform plan
+        run: terraform plan -chdir=gcp/gke-deployment
         env: 
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
       
       - name: TF Apply
         if: github.ref == 'refs/head/main' && github.event_name == 'pull_request'
-        run: terraform apply -auto-approve
+        run: terraform apply -chdir=gcp/gke-deployent -auto-approve 
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
