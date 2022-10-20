@@ -44,7 +44,7 @@ jobs:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
       - name: TF Plan (Prod)
-        if: github.event_name == "release"
+        if: github.event_name == 'release'
         run: terraform -chdir=gcp/gke-deployment plan -var-file=dev.tfvars -out=tfplan_prod
         env: 
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
