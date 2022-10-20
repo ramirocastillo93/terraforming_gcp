@@ -11,6 +11,11 @@ on:
       - main
     paths:
       - 'gcp/gke-deployment/*'
+  release:
+    branches:
+      - main
+    paths:
+      - 'gcp/gke-deployment/*'
 
 jobs:
   terraform-plan:
@@ -34,10 +39,17 @@ jobs:
       - name: TF FMT
         run: terraform -chdir=gcp/gke-deployment fmt -recursive -check 
 
-      - name: TF Plan
-        run: terraform -chdir=gcp/gke-deployment plan -var-file=prod.tfvars -out=tfplan
+      - name: TF Plan (Dev)
+        run: terraform -chdir=gcp/gke-deployment plan -var-file=dev.tfvars -out=tfplan_dev
         env: 
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+
+      - name: TF Plan (Prod)
+        if: github.event_name == "release"
+        run: terraform -chdir=gcp/gke-deployment plan -var-file=dev.tfvars -out=tfplan_prod
+        env: 
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+      
       
       # - name: Upload Artifact TFPLAN
       #   uses: actions/upload-artifact@v3
@@ -46,8 +58,14 @@ jobs:
       #     path: ./tfplan
       #     retention-days: 1
 
-      - name: TF Apply
-        # if: github.ref == 'refs/head/main' && github.event_name == 'pull_request'
-        run: terraform -chdir=gcp/gke-deployment apply -auto-approve tfplan
+      - name: TF Apply (Dev)
+        if: github.ref == 'refs/head/main' && github.event_name == 'pull_request'
+        run: terraform -chdir=gcp/gke-deployment apply -auto-approve tfplan_dev
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+      
+      - name: TF Apply (Prod)
+        if: github.ref == 'refs/head/main' && github.event_name == 'release'
+        run: terraform -chdir=gcp/gke-deployment apply -auto-approve tfplan_prod
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
