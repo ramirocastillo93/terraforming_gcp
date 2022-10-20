@@ -12,8 +12,7 @@ on:
     paths:
       - 'gcp/gke-deployment/*'
   release:
-    branches:
-      - main
+    types: [created]
     paths:
       - 'gcp/gke-deployment/*'
 
@@ -65,7 +64,7 @@ jobs:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
       
       - name: TF Apply (Prod)
-        if: github.ref == 'refs/head/main' && github.event_name == 'release'
+        if: github.ref == 'refs/head/main' && github.event_name == 'release' && github.event.action == 'created'
         run: terraform -chdir=gcp/gke-deployment apply -auto-approve tfplan_prod
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
