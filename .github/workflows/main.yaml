@@ -13,6 +13,8 @@ on:
       - 'gcp/gke-deployment/*'
   release:
     types: [created]
+    branches:
+      - main
     paths:
       - 'gcp/gke-deployment/*'
 
@@ -39,13 +41,13 @@ jobs:
         run: terraform -chdir=gcp/gke-deployment fmt -recursive -check 
 
       - name: TF Plan (Dev)
-        run: terraform -chdir=gcp/gke-deployment plan -var-file=dev.tfvars -out=tfplan_dev
+        run: terraform -chdir=gcp/gke-deployment plan -var-file=dev.tfvars -out=tfplan_dev -lock=false
         env: 
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
       - name: TF Plan (Prod)
         if: github.event_name == 'release'
-        run: terraform -chdir=gcp/gke-deployment plan -var-file=dev.tfvars -out=tfplan_prod
+        run: terraform -chdir=gcp/gke-deployment plan -var-file=dev.tfvars -out=tfplan_prod -lock=false
         env: 
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
       
