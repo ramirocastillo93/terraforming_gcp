@@ -6,9 +6,9 @@ on:
       deployment_directory:
         required: true
         type: string
-      gh_env:
-        required: true
-        type: string
+      # gh_env:
+      #   required: true
+      #   type: string
     secrets:
       google_credentials:
         required: true
@@ -17,7 +17,7 @@ jobs:
   terraform-init-validate-plan-build:
     name: "Terraform"
     runs-on: ubuntu-latest
-    environment: ${{ input.gh_env }}
+    # environment: ${{ input.gh_env }}
     env: 
       GOOGLE_CREDENTIALS: ${{ secrets.google_credentials }}
     defaults:
