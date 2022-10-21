@@ -19,4 +19,4 @@ jobs:
     with:
       deployment_directory: gcp/gke-deployment
     secrets:
-      google_credentials: ${{secrets.GOOGLE_CREDENTIALS}}
+      google_credentials: ${{ secrets.GOOGLE_CREDENTIALS }}

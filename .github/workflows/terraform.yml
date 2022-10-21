@@ -21,8 +21,8 @@ jobs:
     env: 
       GOOGLE_CREDENTIALS: ${{ secrets.google_credentials }}
     defaults:
-    run:
-      working-directory: ${{ inputs.deployment_directory }}
+      run:
+        working-directory: ${{ inputs.deployment_directory }}
     steps:
       # This step will allow the workflow to use a copy of the repository's code.
       - name: Checkout
