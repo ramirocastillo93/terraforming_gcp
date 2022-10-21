@@ -14,20 +14,9 @@ on:
       - 'gcp/gke-deployment/*'
 
 jobs:
-  TF_Dev:
+  TF_Deploy:
     uses: ramirocastillo93/terraforming_gcp/.github/workflows/terraform.yml@feature/github-actions
     with:
       deployment_directory: gcp/gke-deployment
-      var_file: dev.tfvars
-      plan_file: dev.tfplan
-    secrets:
-      google_credentials: ${{secrets.GOOGLE_CREDENTIALS}}
-
-  TF_Prod:
-    uses: ramirocastillo93/terraforming_gcp/.github/workflows/terraform.yml@feature/github-actions
-    with:
-      deployment_directory: gcp/gke-deployment
-      var_file: prod.tfvars
-      plan_file: prod.tfplan
     secrets:
       google_credentials: ${{secrets.GOOGLE_CREDENTIALS}}

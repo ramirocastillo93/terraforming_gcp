@@ -6,10 +6,7 @@ on:
       deployment_directory:
         required: true
         type: string
-      var_file: 
-        required: true
-        type: string
-      plan_file:
+      gh_env:
         required: true
         type: string
     secrets:
@@ -20,7 +17,12 @@ jobs:
   terraform-init-validate-plan-build:
     name: "Terraform"
     runs-on: ubuntu-latest
-
+    environment: ${{ input.gh_env }}
+    env: 
+      GOOGLE_CREDENTIALS: ${{ secrets.google_credentials }}
+    defaults:
+    run:
+      working-directory: ${{ inputs.deployment_directory }}
     steps:
       # This step will allow the workflow to use a copy of the repository's code.
       - name: Checkout
@@ -31,33 +33,23 @@ jobs:
         uses: hashicorp/setup-terraform@v1
 
       - name: TF Init
-        run: terraform -chdir=${{ inputs.deployment_directory }} init
-        env:
-          google_credentials: ${{ secrets.google_credentials }}
+        run: terraform init
 
       - name: TF FMT
-        run: terraform -chdir=${{ inputs.deployment_directory }} fmt -recursive -check 
+        run: terraform fmt -recursive -check 
 
       - name: TF Plan (Dev)
         if: github.ref != 'refs/head/main' && github.event_name == 'pull_request'
-        run: terraform -chdir=${{ inputs.deployment_directory }} plan -var-file=${{ inputs.var_file }} -out=${{ inputs.plan_file }} -lock=false
-        env: 
-          google_credentials: ${{ secrets.google_credentials }}
+        run: terraform plan -var-file=dev.tfvars -out=dev.tfplan -lock=false
 
       - name: TF Plan (Prod)
         if: github.ref == 'refs/head/main' && github.event_name == 'release' && github.event.action == 'created'
-        run: terraform -chdir=${{ inputs.deployment_directory }} plan -var-file=${{ inputs.var_file }} -out=${{ inputs.plan_file }} -lock=false
-        env: 
-          google_credentials: ${{ secrets.google_credentials }}
+        run: terraform plan -var-file=prod.tfvars -out=prod.tfplan -lock=false
       
-      - name: TF Apply (Prod)
+      - name: TF Apply (Dev)
         if: github.ref != 'refs/head/main' && github.event_name == 'pull_request'
-        run: terraform -chdir=${{ inputs.deployment_directory }} apply -auto-approve ${{ inputs.plan_file }}
-        env:
-          google_credentials: ${{ secrets.google_credentials }}
+        run: terraform apply -auto-approve dev.tfplan
 
       - name: TF Apply (Prod)
         if: github.ref == 'refs/head/main' && github.event_name == 'release' && github.event.action == 'created'
-        run: terraform -chdir=${{ inputs.deployment_directory }} apply -auto-approve ${{ inputs.plan_file }}
-        env:
-          google_credentials: ${{ secrets.google_credentials }}
+        run: terraform apply -auto-approve prod.tfplan
