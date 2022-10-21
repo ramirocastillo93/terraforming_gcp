@@ -39,7 +39,7 @@ jobs:
         run: terraform fmt -recursive -check 
 
       - name: TF Plan (Dev)
-        if: github.ref != 'refs/head/main' && github.event_name == 'pull_request'
+        if: github.ref == 'refs/head/main' && github.event_name == 'pull_request'
         run: terraform plan -var-file=dev.tfvars -out=dev.tfplan -lock=false
 
       - name: TF Plan (Prod)
@@ -47,7 +47,7 @@ jobs:
         run: terraform plan -var-file=prod.tfvars -out=prod.tfplan -lock=false
       
       - name: TF Apply (Dev)
-        if: github.ref != 'refs/head/main' && github.event_name == 'pull_request'
+        if: github.ref == 'refs/head/main' && github.event_name == 'pull_request'
         run: terraform apply -auto-approve dev.tfplan
 
       - name: TF Apply (Prod)
