@@ -31,33 +31,33 @@ jobs:
         uses: hashicorp/setup-terraform@v1
 
       - name: TF Init
-        run: terraform -chdir={{ inputs.deployment_directory }} init
+        run: terraform -chdir=${{ inputs.deployment_directory }} init
         env:
           google_credentials: ${{ secrets.google_credentials }}
 
       - name: TF FMT
-        run: terraform -chdir={{ inputs.deployment_directory }} fmt -recursive -check 
+        run: terraform -chdir=${{ inputs.deployment_directory }} fmt -recursive -check 
 
       - name: TF Plan (Dev)
         if: github.ref != 'refs/head/main' && github.event_name == 'pull_request'
-        run: terraform -chdir={{ inputs.deployment_directory }} plan -var-file={{ inputs.var_file }} -out={{ inputs.plan_file }} -lock=false
+        run: terraform -chdir=${{ inputs.deployment_directory }} plan -var-file=${{ inputs.var_file }} -out=${{ inputs.plan_file }} -lock=false
         env: 
           google_credentials: ${{ secrets.google_credentials }}
 
       - name: TF Plan (Prod)
         if: github.ref == 'refs/head/main' && github.event_name == 'release' && github.event.action == 'created'
-        run: terraform -chdir={{ inputs.deployment_directory }} plan -var-file={{ inputs.var_file }} -out={{ inputs.plan_file }} -lock=false
+        run: terraform -chdir=${{ inputs.deployment_directory }} plan -var-file=${{ inputs.var_file }} -out=${{ inputs.plan_file }} -lock=false
         env: 
           google_credentials: ${{ secrets.google_credentials }}
       
       - name: TF Apply (Prod)
         if: github.ref != 'refs/head/main' && github.event_name == 'pull_request'
-        run: terraform -chdir={{ inputs.deployment_directory }} apply -auto-approve {{ inputs.plan_file }}
+        run: terraform -chdir=${{ inputs.deployment_directory }} apply -auto-approve ${{ inputs.plan_file }}
         env:
           google_credentials: ${{ secrets.google_credentials }}
 
       - name: TF Apply (Prod)
         if: github.ref == 'refs/head/main' && github.event_name == 'release' && github.event.action == 'created'
-        run: terraform -chdir={{ inputs.deployment_directory }} apply -auto-approve {{ inputs.plan_file }}
+        run: terraform -chdir=${{ inputs.deployment_directory }} apply -auto-approve ${{ inputs.plan_file }}
         env:
           google_credentials: ${{ secrets.google_credentials }}
