@@ -19,7 +19,7 @@ jobs:
     with:
       deployment_directory: gcp/gke-deployment
       var_file: dev.tfvars
-      out_file: dev.tfplan
+      plan_file: dev.tfplan
     secrets:
       google_credentials: ${{secrets.GOOGLE_CREDENTIALS}}
 
@@ -28,6 +28,6 @@ jobs:
     with:
       deployment_directory: gcp/gke-deployment
       var_file: prod.tfvars
-      out_file: prod.tfplan
+      plan_file: prod.tfplan
     secrets:
       google_credentials: ${{secrets.GOOGLE_CREDENTIALS}}
