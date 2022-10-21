@@ -1,72 +1,14 @@
-name: "Deploying GKE with Terraform"
+name: Reusable Workflow user
 
 on:
-  push:
-    branches:
-      - main
-      - 'feature/*'
-      - 'hotfix/*'
-  pull_request:
-    branches:
-      - main
-    paths:
-      - 'gcp/gke-deployment/*'
-  release:
-    types: [created]
-    branches:
-      - main
-    paths:
-      - 'gcp/gke-deployment/*'
+  workflow_dispatch:
 
 jobs:
-  terraform-plan:
-    name: "Terraform"
-    runs-on: ubuntu-latest
-
-    steps:
-      # This step will allow the workflow to use a copy of the repository's code.
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      # This step will install all the TF dependencies in order to properly run this workflow.
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
-
-      - name: TF Init
-        run: terraform -chdir=gcp/gke-deployment init
-        env:
-          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
-
-      - name: TF FMT
-        run: terraform -chdir=gcp/gke-deployment fmt -recursive -check 
-
-      - name: TF Plan (Dev)
-        run: terraform -chdir=gcp/gke-deployment plan -var-file=dev.tfvars -out=tfplan_dev -lock=false
-        env: 
-          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
-
-      - name: TF Plan (Prod)
-        if: github.event_name == 'release'
-        run: terraform -chdir=gcp/gke-deployment plan -var-file=dev.tfvars -out=tfplan_prod -lock=false
-        env: 
-          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
-      
-      
-      # - name: Upload Artifact TFPLAN
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: tfplan
-      #     path: ./tfplan
-      #     retention-days: 1
-
-      - name: TF Apply (Dev)
-        if: github.ref == 'refs/head/main' && github.event_name == 'pull_request'
-        run: terraform -chdir=gcp/gke-deployment apply -auto-approve tfplan_dev
-        env:
-          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
-      
-      - name: TF Apply (Prod)
-        if: github.ref == 'refs/head/main' && github.event_name == 'release' && github.event.action == 'created'
-        run: terraform -chdir=gcp/gke-deployment apply -auto-approve tfplan_prod
-        env:
-          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+  terraform:
+    uses: ramirocastillo93/terraforming_gke/.github/workflows/terraform.yaml@main
+    with:
+      deployment_directory: gcp/gke-deployment
+      var_file: dev.tfvars
+      out_file: tfplan_dev
+    secrets:
+      google_credentials: ${{secrets.GOOGLE_CREDENTIALS}}
