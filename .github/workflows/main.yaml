@@ -24,7 +24,7 @@ jobs:
       google_credentials: ${{secrets.GOOGLE_CREDENTIALS}}
 
   TF_Prod:
-    uses: ramirocastillo93/terraforming_gke/.github/workflows/terraform.yaml@main
+    uses: ramirocastillo93/terraforming_gcp/.github/workflows/terraform.yml@feature/github-actions
     with:
       deployment_directory: gcp/gke-deployment
       var_file: prod.tfvars
