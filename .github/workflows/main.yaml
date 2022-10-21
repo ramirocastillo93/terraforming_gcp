@@ -1,14 +1,33 @@
-name: Reusable Workflow user
+name: Deploying GKE with Terraform
 
 on:
-  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'gcp/gke-deployment/*'
+  release:
+    types: [ created ]
+    branches:
+      - main
+    paths:
+      - 'gcp/gke-deployment/*'
 
 jobs:
-  terraform:
+  TF_Dev:
     uses: ramirocastillo93/terraforming_gke/.github/workflows/terraform.yaml@main
     with:
       deployment_directory: gcp/gke-deployment
       var_file: dev.tfvars
-      out_file: tfplan_dev
+      out_file: dev.tfplan
+    secrets:
+      google_credentials: ${{secrets.GOOGLE_CREDENTIALS}}
+
+  TF_Prod:
+    uses: ramirocastillo93/terraforming_gke/.github/workflows/terraform.yaml@main
+    with:
+      deployment_directory: gcp/gke-deployment
+      var_file: prod.tfvars
+      out_file: prod.tfplan
     secrets:
       google_credentials: ${{secrets.GOOGLE_CREDENTIALS}}
