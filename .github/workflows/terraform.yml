@@ -1,0 +1,63 @@
+name: "Deploying GKE with Terraform"
+
+on:
+  workflow_call:
+    inputs:
+      deployment_directory:
+        required: true
+        type: string
+      var_file: 
+        required: true
+        type: string
+      plan_file:
+        required: true
+        type: string
+    secrets:
+      google_credentials:
+        required: true
+
+jobs:
+  terraform-init-validate-plan-build:
+    name: "Terraform"
+    runs-on: ubuntu-latest
+
+    steps:
+      # This step will allow the workflow to use a copy of the repository's code.
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      # This step will install all the TF dependencies in order to properly run this workflow.
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: TF Init
+        run: terraform -chdir={{ inputs.deployment_directory }} init
+        env:
+          google_credentials: ${{ secrets.google_credentials }}
+
+      - name: TF FMT
+        run: terraform -chdir={{ inputs.deployment_directory }} fmt -recursive -check 
+
+      - name: TF Plan (Dev)
+        if: github.ref != 'refs/head/main' && github.event_name == 'pull_request'
+        run: terraform -chdir={{ inputs.deployment_directory }} plan -var-file={{ inputs.var_file }} -out={{ inputs.plan_file }} -lock=false
+        env: 
+          google_credentials: ${{ secrets.google_credentials }}
+
+      - name: TF Plan (Prod)
+        if: github.ref == 'refs/head/main' && github.event_name == 'release' && github.event.action == 'created'
+        run: terraform -chdir={{ inputs.deployment_directory }} plan -var-file={{ inputs.var_file }} -out={{ inputs.plan_file }} -lock=false
+        env: 
+          google_credentials: ${{ secrets.google_credentials }}
+      
+      - name: TF Apply (Prod)
+        if: github.ref != 'refs/head/main' && github.event_name == 'pull_request'
+        run: terraform -chdir={{ inputs.deployment_directory }} apply -auto-approve {{ inputs.plan_file }}
+        env:
+          google_credentials: ${{ secrets.google_credentials }}
+
+      - name: TF Apply (Prod)
+        if: github.ref == 'refs/head/main' && github.event_name == 'release' && github.event.action == 'created'
+        run: terraform -chdir={{ inputs.deployment_directory }} apply -auto-approve {{ inputs.plan_file }}
+        env:
+          google_credentials: ${{ secrets.google_credentials }}
