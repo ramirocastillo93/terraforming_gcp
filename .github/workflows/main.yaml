@@ -16,7 +16,6 @@ on:
 jobs:
   TF_Dev:
     uses: ramirocastillo93/terraforming_gcp/.github/workflows/terraform.yml@feature/github-actions
-    if: inputs.var_file == 'dev*'
     with:
       deployment_directory: gcp/gke-deployment
       var_file: dev.tfvars
@@ -26,7 +25,6 @@ jobs:
 
   TF_Prod:
     uses: ramirocastillo93/terraforming_gke/.github/workflows/terraform.yaml@main
-    if: inputs.var_file == 'prod*'
     with:
       deployment_directory: gcp/gke-deployment
       var_file: prod.tfvars
