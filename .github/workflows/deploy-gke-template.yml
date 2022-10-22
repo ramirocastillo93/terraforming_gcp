@@ -39,7 +39,7 @@ jobs:
         run: terraform fmt -recursive -check 
 
       - name: TF Plan 
-        run: terraform plan -var-file={{ input.env }}.tfvars -out=${{ input.env }}.tfplan -lock=false
+        run: terraform plan -var-file={{ inputs.env }}.tfvars -out=${{ inputs.env }}.tfplan -lock=false
       
       - name: TF Apply 
-        run: terraform apply -auto-approve ${{ input.env }}}.tfplan
+        run: terraform apply -auto-approve ${{ inputs.env }}}.tfplan
