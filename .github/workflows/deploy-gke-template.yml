@@ -6,9 +6,9 @@ on:
       deployment_directory:
         required: true
         type: string
-      # gh_env:
-      #   required: true
-      #   type: string
+      env:
+        required: true
+        type: string
     secrets:
       google_credentials:
         required: true
@@ -38,18 +38,8 @@ jobs:
       - name: TF FMT
         run: terraform fmt -recursive -check 
 
-      - name: TF Plan (Dev)
-        if: github.ref == 'refs/head/main' && github.event_name == 'pull_request'
-        run: terraform plan -var-file=dev.tfvars -out=dev.tfplan -lock=false
-
-      - name: TF Plan (Prod)
-        if: github.ref == 'refs/head/main' && github.event_name == 'release' && github.event.action == 'created'
-        run: terraform plan -var-file=prod.tfvars -out=prod.tfplan -lock=false
+      - name: TF Plan 
+        run: terraform plan -var-file={{ input.env }}.tfvars -out=${{ input.env }}.tfplan -lock=false
       
-      - name: TF Apply (Dev)
-        if: github.ref == 'refs/head/main' && github.event_name == 'pull_request'
-        run: terraform apply -auto-approve dev.tfplan
-
-      - name: TF Apply (Prod)
-        if: github.ref == 'refs/head/main' && github.event_name == 'release' && github.event.action == 'created'
-        run: terraform apply -auto-approve prod.tfplan
+      - name: TF Apply 
+        run: terraform apply -auto-approve ${{ input.env }}}.tfplan
