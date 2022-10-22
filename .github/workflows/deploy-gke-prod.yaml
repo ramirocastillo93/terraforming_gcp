@@ -16,7 +16,7 @@ on:
 
 jobs:
   TF_Deploy:
-    uses: ramirocastillo93/terraforming_gcp/.github/workflows/terraform.yml@feature/github-actions
+    uses: ramirocastillo93/terraforming_gcp/.github/workflows/deploy-gke-template.yml@feature/github-actions
     with:
       deployment_directory: gcp/gke-deployment
       env: prod
