@@ -42,4 +42,4 @@ jobs:
         run: terraform plan -var-file=${{ inputs.env }}.tfvars -out=${{ inputs.env }}.tfplan -lock=false
       
       - name: TF Apply 
-        run: terraform apply -auto-approve ${{ inputs.env }}}.tfplan
+        run: terraform apply -auto-approve ${{ inputs.env }}.tfplan
