@@ -1,4 +1,4 @@
-name: name: Deploying GKE with Terraform (Dev)
+name: Deploying GKE with Terraform (Dev)
 
 on:
   # workflow_dispatch:
