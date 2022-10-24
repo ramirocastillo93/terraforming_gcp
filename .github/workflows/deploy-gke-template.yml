@@ -1,4 +1,4 @@
-name: "Deploying GKE with Terraform"
+name: "Reusable Terraform Workflow"
 
 on:
   workflow_call:
