@@ -4,14 +4,10 @@ on:
   pull_request:
     branches:
       - main
+      - 'feature/*'
+      - 'hotifx/*'
     paths:
       - gcp/gke-deployment/**
-  # release:
-  #   types: [ created ]
-  #   branches:
-  #     - main
-  #   paths:
-  #     - gcp/gke-deployment/**
 
 jobs:
   TF_Deploy_Dev:

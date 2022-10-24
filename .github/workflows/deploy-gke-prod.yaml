@@ -1,11 +1,6 @@
 name: Deploying GKE with Terraform (Prod)
 
 on:
-  # pull_request:
-  #   branches:
-  #     - main
-  #   paths:
-  #     - gcp/gke-deployment/**
   release:
     types: [ created ]
     branches:
