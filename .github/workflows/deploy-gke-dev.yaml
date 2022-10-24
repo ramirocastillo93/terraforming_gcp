@@ -1,7 +1,6 @@
 name: Deploying GKE with Terraform (Dev)
 
 on:
-  # workflow_dispatch:
   pull_request:
     branches:
       - main

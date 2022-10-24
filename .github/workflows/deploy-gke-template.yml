@@ -32,14 +32,14 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
 
-      - name: TF Init
+      - name: Run Terraform Init
         run: terraform init
 
-      - name: TF FMT
+      - name: Run Terraform Format
         run: terraform fmt -recursive -check 
 
-      - name: TF Plan 
+      - name: Run Terraform Plan
         run: terraform plan -var-file=${{ inputs.env }}.tfvars -out=${{ inputs.env }}.tfplan -lock=false
       
-      - name: TF Apply 
+      - name: Run Terraform Apply
         run: terraform apply -auto-approve ${{ inputs.env }}.tfplan
