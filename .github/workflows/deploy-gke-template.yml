@@ -17,7 +17,6 @@ jobs:
   terraform-init-validate-plan-build:
     name: "Terraform"
     runs-on: ubuntu-latest
-    # environment: ${{ input.gh_env }}
     env: 
       GOOGLE_CREDENTIALS: ${{ secrets.google_credentials }}
     defaults:
@@ -42,4 +41,6 @@ jobs:
         run: terraform plan -var-file=${{ inputs.env }}.tfvars -out=${{ inputs.env }}.tfplan -lock=false
       
       - name: Run Terraform Apply
+        if:
+          (github.ref == 'refs/head/main' && github.event_name == 'push') || (github.event_name == 'release')
         run: terraform apply -auto-approve ${{ inputs.env }}.tfplan
