@@ -1,8 +1,9 @@
 # Terraforming_GCP
 
 ## Description
-Welcome to all fellow readers trying to deploy a GKE cluster using Terraform! Here you will find a quick guide on how to properly deploy said cluster using Terraform best practices and existing Terraform modules created by Google itself.
-Of course, some basic knowledge about Terraform is expected as this article isn't going to explain what Terraform is but it certainly will detail which commands to run in order to deploy what we want in the way we want to.
+Welcome to all fellow readers trying to deploy a GKE cluster using Terraform! Here you will find a quick guide on how to properly deploy said cluster using Terraform best practices and existing Terraform modules created by Google itself using Github Actions as the CI/CD platform.
+
+Of course, some basic knowledge about Terraform and CI/CD is expected as this article isn't going to explain what these technologies are in detail but it certainly will detail which commands to run in order to deploy what we want in the way we want to.
 
 We will be deploying three main Terraform modules that will provision the resources that we want in order to make the Online Boutique store functioning properly:
 - [`GKE Module`](https://github.com/terraform-google-modules/terraform-google-kubernetes-engine#terraform-kubernetes-engine-module)
@@ -229,3 +230,140 @@ export KUBE_CONFIG_PATH=./kubeconfig-dev # Please write the complete directory
 
 No outputs.
 <!-- END_TF_DOCS -->
+
+
+# Github Actions
+Github Actions is a continuous integration and continuous delivery (CI/CD) platform that allows you to automate your build, test and deployment pipeline with every push or pull request to your repository.
+
+If you want to learn more about it, [check this link out ](https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions).
+
+## First Step
+We will be creating a new folder called `.github` with a subfolder in it called `workflows`. Inside of it we will create a new file called `main.yaml` that will have all the configurations to run the CI/CD pipeline.
+
+Remember that if you don't create this folder, Github will have no idea that there is a plan to use its Actions.
+
+Next, you'll have to create a service account and download its key in order to use it as a secret and give the pipeline the correct credentials. If you don't, Terraform will not be able to do its magic.
+
+## Tree
+```
+.github
+└── workflows
+    └── deploy-gke-dev.yaml
+    └── deploy-gke-prod.yaml
+    └── deploy-gke-template.yaml
+```
+
+## Explanation of deploy-gke-template.yaml
+This is a reusable workflow that will be later be used for deployment in different environments by referencing this template in your other workflows files. In this case, prod and dev. 
+
+This feature allow us to pass some inputs and secrets at the beginning of the workflow so we don't repeat code and run the same workflow on different environments. 
+
+Let's explain the workflow itself:
+
+```
+on:
+  workflow_call:
+    inputs:
+      deployment_directory:
+        required: true
+        type: string
+      env:
+        required: true
+        type: string
+    secrets:
+      google_credentials:
+        required: true
+```
+The `workflow_call` is the trigger that will make this template reusable. Init we have `inputs` and `secrets`. The `inputs` are the normal data that you can pass. In this case we are passing two inputs: `env` and `deployment_directory`. This will allow us to run the same workflow for different deployments on multiple environments. 
+At the end we have the `google_credentials` secret that we must define and upload as an [Action Secret on yout GitHub account](https://docs.github.com/en/enterprise-cloud@latest/actions/security-guides/encrypted-secrets). 
+
+Then the definition of the workflow jobs begins:
+```
+jobs:
+  terraform-init-validate-plan-build:
+    name: "Terraform"
+    runs-on: ubuntu-latest
+    env: 
+      GOOGLE_CREDENTIALS: ${{ secrets.google_credentials }}
+    defaults:
+      run:
+        working-directory: ${{ inputs.deployment_directory }}
+```
+You'll have to `name` the job, define where it will run with `runs-on` (ubuntu-latest for this example), define an `env` variable called `GOOGLE_CREDENTIALS` and the working directory (in this case `gcp/gke-deployment`).
+
+After this initial configuration, there comes a series of steps that are pretty self explanatory. 
+
+The first step is the checkout that will allow the workflow to use a copy of the repository:
+```
+steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+```
+
+The second one will install all the Terraform dependencies on the runner so we can run it on the Github runner.
+```
+- name: Setup Terraform
+  uses: hashicorp/setup-terraform@v1
+```
+
+In the next ones we will start using Terraform commands:
+```
+- name: Run Terraform Init
+  run: terraform init
+
+- name: Run Terraform Format
+  run: terraform fmt -recursive -check 
+
+- name: Run Terraform Plan
+  run: terraform plan -var-file=${{ inputs.env }}.tfvars -out=${{ inputs.env }}.tfplan -lock=false
+```
+Notice the `Run Terraform Plan` step has a `-var-file=${{ inputs.env }}`.tfvars attribute and an `-out=${{ inputs.env }}.tfplan`. Depending on the `env` that you will pass when you reference this workflow, Terraform will do its magic. For example, if you pass as `env` the value `prod` Terraform will run:
+```
+- name: Run Terraform Plan
+  run: terraform plan -var-file=prod.tfvars -out=prod.tfplan -lock=false
+```
+Meaning that will use the file `prod.tfvars` (that should have all the prod variables) and will output the plan into a `prod.tfplan` file that will then be used for in the Terraform Apply step:
+```
+- name: Run Terraform Apply
+  if:
+      (github.ref == 'refs/head/main' && github.event_name == 'push') || (github.event_name == 'release')
+  run: terraform apply -auto-approve ${{ inputs.env }}.tfplan
+```
+This step has the `if` statement. It will tell this step to only be run if there is a push the main branch or there is a release.
+It will use the output file that was saved on the previous step.
+
+### Call the reusable workflow
+You will have as many workflow files as environments you have. Each workflow file should have its rules to be run on, such as "on every pull request in every branch with changes on a specific folder" or "at every new release".
+
+Let's check the `deploy-gke-dev.yaml` workflow file:
+```
+name: Deploying GKE with Terraform (Dev)
+
+on:
+  pull_request:
+    branches:
+      - main
+      - 'feature/*'
+      - 'hotifx/*'
+    paths:
+      - gcp/gke-deployment/**
+
+jobs:
+  TF_Deploy_Dev:
+    uses: ramirocastillo93/terraforming_gcp/.github/workflows/deploy-gke-template.yml@feature/github-actions
+    with:
+      deployment_directory: gcp/gke-deployment
+      env: dev
+    secrets:
+      google_credentials: ${{ secrets.GOOGLE_CREDENTIALS }}
+```
+It's rather simple. As you can see, you will first define when this workflow should be executed. In this case (for dev) it will run on every pull request on branches `main`, `feature/*` and `hotfix/*`. 
+
+After that we have to define the jobs. In this case it will just be one that will reference the reusable workflow we've created previously. 
+
+The way for referencing that reusable workflow is as follows:
+`uses: {user}/{repository_name}/.github/workflows/{name_of_the_reusable_workflow}.yaml@{branch}`
+
+After that you will have to pass on the `inputs` and `secrets` we've defined at the beginning of the reusable workflow and you're ready to go.
+
+**NOTE**: It is recommended to run the pipelines on your hosted GitHub runners rather than github's runners so you keep your credentials out of the public GitHub Ubuntu runner.

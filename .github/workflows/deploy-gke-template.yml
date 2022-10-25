@@ -1,0 +1,46 @@
+name: "Reusable Terraform Workflow"
+
+on:
+  workflow_call:
+    inputs:
+      deployment_directory:
+        required: true
+        type: string
+      env:
+        required: true
+        type: string
+    secrets:
+      google_credentials:
+        required: true
+
+jobs:
+  terraform-init-validate-plan-build:
+    name: "Terraform"
+    runs-on: ubuntu-latest
+    env: 
+      GOOGLE_CREDENTIALS: ${{ secrets.google_credentials }}
+    defaults:
+      run:
+        working-directory: ${{ inputs.deployment_directory }}
+    steps:
+      # This step will allow the workflow to use a copy of the repository's code.
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      # This step will install all the TF dependencies in order to properly run this workflow.
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Run Terraform Init
+        run: terraform init
+
+      - name: Run Terraform Format
+        run: terraform fmt -recursive -check 
+
+      - name: Run Terraform Plan
+        run: terraform plan -var-file=${{ inputs.env }}.tfvars -out=${{ inputs.env }}.tfplan -lock=false
+      
+      - name: Run Terraform Apply
+        if:
+          (github.ref == 'refs/head/main' && github.event_name == 'push') || (github.event_name == 'release')
+        run: terraform apply -auto-approve ${{ inputs.env }}.tfplan

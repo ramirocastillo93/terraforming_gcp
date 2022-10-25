@@ -1,0 +1,19 @@
+name: Deploying GKE with Terraform (Dev)
+
+on:
+  pull_request:
+    branches:
+      - main
+      - 'feature/*'
+      - 'hotifx/*'
+    paths:
+      - gcp/gke-deployment/**
+
+jobs:
+  TF_Deploy_Dev:
+    uses: ramirocastillo93/terraforming_gcp/.github/workflows/deploy-gke-template.yml@feature/github-actions
+    with:
+      deployment_directory: gcp/gke-deployment
+      env: dev
+    secrets:
+      google_credentials: ${{ secrets.GOOGLE_CREDENTIALS }}

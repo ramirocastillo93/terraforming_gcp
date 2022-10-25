@@ -1,0 +1,18 @@
+name: Deploying GKE with Terraform (Prod)
+
+on:
+  release:
+    types: [ created ]
+    branches:
+      - main
+    paths:
+      - gcp/gke-deployment/**
+
+jobs:
+  TF_Deploy_Prod:
+    uses: ramirocastillo93/terraforming_gcp/.github/workflows/deploy-gke-template.yml@feature/github-actions
+    with:
+      deployment_directory: gcp/gke-deployment
+      env: prod
+    secrets:
+      google_credentials: ${{ secrets.GOOGLE_CREDENTIALS }}
