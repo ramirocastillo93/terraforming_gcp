@@ -1,9 +1,9 @@
-name: Terraform Pull Request Commenter
+name: Tfsec Pull Request Commenter
 on:
   pull_request:
 jobs:
   tfsec_commenter:
-    name: Terraform Pull Request Commenter
+    name: Tfsec Pull Request Commenter
     runs-on: ubuntu-latest
 
     steps:
