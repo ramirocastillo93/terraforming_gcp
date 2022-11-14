@@ -367,3 +367,6 @@ The way for referencing that reusable workflow is as follows:
 After that you will have to pass on the `inputs` and `secrets` we've defined at the beginning of the reusable workflow and you're ready to go.
 
 **NOTE**: It is recommended to run the pipelines on your hosted GitHub runners rather than github's runners so you keep your credentials out of the public GitHub Ubuntu runner.
+
+
+### Tfsec Pull Request Commenter
