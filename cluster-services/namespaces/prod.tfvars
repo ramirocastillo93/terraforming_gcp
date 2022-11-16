@@ -1,6 +1,6 @@
 ns_names = {
-  "istio-systems" = {
-    ns_name = "istio-systems"
+  "istio-system" = {
+    ns_name = "istio-system"
   },
   "istio-ingress" = {
     ns_name = "istio-ingress"
