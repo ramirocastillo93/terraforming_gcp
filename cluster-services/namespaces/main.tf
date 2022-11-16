@@ -4,5 +4,7 @@ resource "kubernetes_namespace" "new_namespace" {
     annotations = {
       name = "${each.value.ns_name}"
     }
+
+    name = "${each.value.ns_name}"
   }
 }
