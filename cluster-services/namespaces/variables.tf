@@ -1,4 +1,8 @@
-variable "ns_name" {
-  type        = string
-  description = "Namespace name"
+variable "ns_names" {
+  description = "Namespace names"
+  type = map(
+    object({
+      ns_name = string
+    })
+  )
 }
