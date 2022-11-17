@@ -411,3 +411,13 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 ```
 NOTE: Check the versions of every step as they might have changed at the time you are reading this.
+
+# Deploying Istio with Helm and Terraform
+You may or may not know what Istio or Helm is, but we will assume you know something about Terraform by now. 
+
+Helm is the application manager of Kubernetes that will let you install applications inside your clusters by creating k8s yaml manifests. The real magic starts when you understand that this awesome tool can scale and upgrade your applications using different ways of deployment.
+For more information click [here](https://helm.sh/).
+
+Istio is a service mesh. In other words, is a modernized service networking layer for cloud-native applications that will automatically inject sidecar proxies into every workload of your cluster allowing you to have way more control over how your microservices are communicating within themselves and the outside world. 
+For more information click [here](https://istio.io/).
+
