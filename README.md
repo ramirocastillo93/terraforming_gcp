@@ -370,3 +370,44 @@ After that you will have to pass on the `inputs` and `secrets` we've defined at 
 
 
 ### Tfsec Pull Request Commenter
+One of the not so recent additions is a Github Action that will process your Github Pull Request commits and add comments where there are failures in the deployment. This is called `tfsec`.
+
+A quick example offered by [Owen Rumney](https://www.owenrumney.co.uk/running-tfsec-as-a-github-action/):
+```hcl
+resource "aws_s3_bucket" "another-bucket-with-logging" {
+  bucket = "my-failing-bucket-no-encryption"
+
+  logging {
+    target_bucket = data.aws_s3_bucket.acme-s3-access-logging.id
+    target_prefix = "my-failing-bucket-not-encryption/logs/"
+  }
+}
+```
+This bucket above logging, but the definition doesn’t set up encryption on the bucket. This fails tfsec check AWS017.
+
+When the PR is committed, the Github Action runs and comments directly to the PR has failed the tfsec check. Reviewers can now quickly see the issues and act accordingly.
+
+
+The way of implementation is pretty straightforward:
+1. Of course the directory of installation must be `.github/workflows`.
+2. Create a new file called something like `tfsec_pr_commenter.yaml`. Be aware, the only file extensions permitted are `.yml` and `.yaml`. 
+3. The code must be something shown as below:
+```
+name: Tfsec Pull Request Commenter
+on:
+  pull_request:
+jobs:
+  tfsec_commenter:
+    name: Tfsec Pull Request Commenter
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: tfsec Commenter
+        uses: tfsec/tfsec-pr-commenter-action@main
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+```
+NOTE: Check the versions of every step as they might have changed at the time you are reading this.
