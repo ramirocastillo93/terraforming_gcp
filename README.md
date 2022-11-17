@@ -421,3 +421,12 @@ For more information click [here](https://helm.sh/).
 Istio is a service mesh. In other words, is a modernized service networking layer for cloud-native applications that will automatically inject sidecar proxies into every workload of your cluster allowing you to have way more control over how your microservices are communicating within themselves and the outside world. 
 For more information click [here](https://istio.io/).
 
+What we will do in this section is as the title says: deploy Istio into our cluster using the application manager called Helm and our old friend Terraform so we can later deploy our application safely.
+
+## Requirements
+- A k8s cluster. It doesn't matter where, but in this case it will be the cluster we've already created.
+- Our `kubeconfig` file with the credentials we will need so Terraform can connect to the cluster.
+
+That's it!
+
+## Deployment
