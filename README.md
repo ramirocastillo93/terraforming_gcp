@@ -430,3 +430,38 @@ What we will do in this section is as the title says: deploy Istio into our clus
 That's it!
 
 ## Deployment
+Istio need two `namespaces` within your cluster
+1. `istio-system`
+2. `istio-ingress`
+
+The `istio-system` namespace will harbor important parts of Istio such as `istio-base` that contains cluster-wide resources used by the Istio control panel and the Istio discovery service, `istiod`. 
+
+The `istio-ingress` namespace will contain the Ingress Gateway that will be hearing all the incoming traffic and balance it according your configuration.
+
+Let's create those namespaces within your cluster.
+
+We will create a new folder called `cluster-services` at the same level as the `gcp` folder, and inside of it we will create a `namespaces` folder. We will need four more files: `main.tf`, `providers.tf`, `variables.tf` and `version.tf`.
+Feel free to create any `.tfvars` files you need, we will use `prod.tfvars` and `dev.tfvars`.
+
+Our directory should look like this:
+```
+├── LICENSE
+├── README.md
+├── cluster-services
+│    └── namespaces
+│       ├── main.tf
+│       ├── providers.tf
+│       ├── variables.tf
+│       └── version.tf
+└── gcp
+    └── gke-deployment
+        ├── dev.tfvars
+        ├── dev_output.json
+        ├── kubeconfig-dev
+        ├── main.tf
+        ├── prod.tfvars
+        ├── providers.tf
+        ├── variables.tf
+        └── version.tf
+```
+To be continued...
