@@ -367,3 +367,101 @@ The way for referencing that reusable workflow is as follows:
 After that you will have to pass on the `inputs` and `secrets` we've defined at the beginning of the reusable workflow and you're ready to go.
 
 **NOTE**: It is recommended to run the pipelines on your hosted GitHub runners rather than github's runners so you keep your credentials out of the public GitHub Ubuntu runner.
+
+
+### Tfsec Pull Request Commenter
+One of the not so recent additions is a Github Action that will process your Github Pull Request commits and add comments where there are failures in the deployment. This is called `tfsec`.
+
+A quick example offered by [Owen Rumney](https://www.owenrumney.co.uk/running-tfsec-as-a-github-action/):
+```hcl
+resource "aws_s3_bucket" "another-bucket-with-logging" {
+  bucket = "my-failing-bucket-no-encryption"
+
+  logging {
+    target_bucket = data.aws_s3_bucket.acme-s3-access-logging.id
+    target_prefix = "my-failing-bucket-not-encryption/logs/"
+  }
+}
+```
+This bucket above logging, but the definition doesn’t set up encryption on the bucket. This fails tfsec check AWS017.
+
+When the PR is committed, the Github Action runs and comments directly to the PR has failed the tfsec check. Reviewers can now quickly see the issues and act accordingly.
+
+
+The way of implementation is pretty straightforward:
+1. Of course the directory of installation must be `.github/workflows`.
+2. Create a new file called something like `tfsec_pr_commenter.yaml`. Be aware, the only file extensions permitted are `.yml` and `.yaml`. 
+3. The code must be something shown as below:
+```
+name: Tfsec Pull Request Commenter
+on:
+  pull_request:
+jobs:
+  tfsec_commenter:
+    name: Tfsec Pull Request Commenter
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: tfsec Commenter
+        uses: tfsec/tfsec-pr-commenter-action@main
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+```
+NOTE: Check the versions of every step as they might have changed at the time you are reading this.
+
+# Deploying Istio with Helm and Terraform
+You may or may not know what Istio or Helm is, but we will assume you know something about Terraform by now. 
+
+Helm is the application manager of Kubernetes that will let you install applications inside your clusters by creating k8s yaml manifests. The real magic starts when you understand that this awesome tool can scale and upgrade your applications using different ways of deployment.
+For more information click [here](https://helm.sh/).
+
+Istio is a service mesh. In other words, is a modernized service networking layer for cloud-native applications that will automatically inject sidecar proxies into every workload of your cluster allowing you to have way more control over how your microservices are communicating within themselves and the outside world. 
+For more information click [here](https://istio.io/).
+
+What we will do in this section is as the title says: deploy Istio into our cluster using the application manager called Helm and our old friend Terraform so we can later deploy our application safely.
+
+## Requirements
+- A k8s cluster. It doesn't matter where, but in this case it will be the cluster we've already created.
+- Our `kubeconfig` file with the credentials we will need so Terraform can connect to the cluster.
+
+That's it!
+
+## Deployment
+Istio need two `namespaces` within your cluster
+1. `istio-system`
+2. `istio-ingress`
+
+The `istio-system` namespace will harbor important parts of Istio such as `istio-base` that contains cluster-wide resources used by the Istio control panel and the Istio discovery service, `istiod`. 
+
+The `istio-ingress` namespace will contain the Ingress Gateway that will be hearing all the incoming traffic and balance it according your configuration.
+
+Let's create those namespaces within your cluster.
+
+We will create a new folder called `cluster-services` at the same level as the `gcp` folder, and inside of it we will create a `namespaces` folder. We will need four more files: `main.tf`, `providers.tf`, `variables.tf` and `version.tf`.
+Feel free to create any `.tfvars` files you need, we will use `prod.tfvars` and `dev.tfvars`.
+
+Our directory should look like this:
+```
+├── LICENSE
+├── README.md
+├── cluster-services
+│    └── namespaces
+│       ├── main.tf
+│       ├── providers.tf
+│       ├── variables.tf
+│       └── version.tf
+└── gcp
+    └── gke-deployment
+        ├── dev.tfvars
+        ├── dev_output.json
+        ├── kubeconfig-dev
+        ├── main.tf
+        ├── prod.tfvars
+        ├── providers.tf
+        ├── variables.tf
+        └── version.tf
+```
+To be continued...
