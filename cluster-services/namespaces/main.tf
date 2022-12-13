@@ -5,6 +5,6 @@ resource "kubernetes_namespace" "new_namespace" {
       name = "${each.value.ns_name}"
     }
 
-    name = "${each.value.ns_name}"
+    name = each.value.ns_name
   }
 }
