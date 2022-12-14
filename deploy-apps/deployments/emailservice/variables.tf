@@ -12,3 +12,8 @@ variable "version" {
     type = string
     description = "Version of the release"
 }
+
+variable "chart" {
+    type = string
+    description = "(optional) describe your variable"
+}

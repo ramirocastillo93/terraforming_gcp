@@ -1,15 +1,7 @@
 apiVersion: v2
 name: app
 description: A Helm chart for deploying OnlineBoutique on GKE
-type: application
 version: 0.0.1
-appVersion: 0.0.1
-keywords:
-  - app
-  - gke
-  - terraform
-  - github-actions
-home: https://github.com/ramirocastillo93/terraforming_gcp
 maintainers:
   - name: Ramiro Castillo
     ulr: https://github.com/ramirocastillo93
