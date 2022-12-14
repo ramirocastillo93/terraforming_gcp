@@ -1,3 +1,10 @@
+provider "helm" {
+  kubernetes {
+    config_path = var.kubeconfig_patha
+  }
+  alias = "gke"
+}
+
 terraform {
   required_version = ">= 1.0.0"
   required_providers {
@@ -8,6 +15,6 @@ terraform {
   }
   backend "gcs" {
     bucket = "terraforming_gke"
-    prefix = "apps_state"
+    prefix = "emailservice_state"
   }
 }
