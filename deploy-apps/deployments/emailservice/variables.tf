@@ -1,19 +1,4 @@
-variable "release_name" {
+variable "env" {
   type        = string
-  description = "Release name"
-}
-
-variable "repository_path" {
-    type = string
-    description = "Path for the repository"
-}
-
-variable "version" {
-    type = string
-    description = "Version of the release"
-}
-
-variable "chart" {
-    type = string
-    description = "(optional) describe your variable"
+  description = "The environment name"
 }
