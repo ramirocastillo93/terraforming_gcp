@@ -1,14 +1,15 @@
 app:
-  name: app
+  name: emailservice
   group: app
   replicaCount: 1
   container:
-    image: add-image-here
+    image: gcr.io/google-samples/microservices-demo/emailservice:v0.5.0
     port: 8080
     config: []
     env:
        - key: key
          value: value
   service:
+    name: grpc
     type: ClusterIP
-    port: 8080
+    port: 5000

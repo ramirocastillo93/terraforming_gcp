@@ -3,6 +3,6 @@ resource "helm_release" "application" {
   chart = "${path.module}/helm-base"
 
   values = [
-    file("${path.module}/helm-base/values-${var.env}.yaml")
+    file("${path.module}/helm-base/${var.app_name}-${var.env}.yaml")
   ]
 }

@@ -7,3 +7,8 @@ variable "env" {
     error_message = "ERR! Possible values: prod, dev"
   }
 }
+
+variable "app_name" {
+    type = string
+    description = "Name of the app"
+}

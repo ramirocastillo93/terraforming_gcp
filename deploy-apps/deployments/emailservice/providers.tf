@@ -1,6 +1,6 @@
 provider "helm" {
   kubernetes {
-    config_path = var.kubeconfig_patha
+    config_path = var.kubeconfig_path
   }
   alias = "gke"
 }
