@@ -1,0 +1,15 @@
+
+app:
+  name: adservice
+  group: app
+  replicaCount: 1
+  container:
+    image: gcr.io/google-samples/microservices-demo/adservice:v0.5.0
+    port: 9555
+    config: []
+    env:
+       - key: key
+         value: value
+  service:
+    type: ClusterIP
+    port: 9555
