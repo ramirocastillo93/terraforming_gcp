@@ -2,13 +2,13 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ .Values.app.name }}
-  labels: 
+  labels:
     group: {{ .Values.app.group }}
 spec:
   type: {{ .Values.app.service.type }}
-  selector:             
+  selector:
     app: {{ .Values.app.name }}
   ports:
-    - name: {{ .Values.app.service.name }} 
+    - name: {{ .Values.app.service.name }}
       port: {{ .Values.app.service.port }}       
-      targetPort: {{ .Values.app.container.port }} 
+      targetPort: {{ .Values.app.container.port }}

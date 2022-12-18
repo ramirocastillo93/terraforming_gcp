@@ -1,2 +1,2 @@
-env = "prod"
+env      = "prod"
 app_name = "emailservice"

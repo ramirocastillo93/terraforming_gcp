@@ -3,12 +3,12 @@ app:
   group: app
   replicaCount: 1
   container:
-    image: image
-    port: 8080
+    image: gcr.io/google-samples/microservices-demo/cartservice:v0.5.0
+    port: 7070
     config: []
     env:
        - key: key
          value: value
   service:
     type: ClusterIP
-    port: 8080
+    port: 7070
