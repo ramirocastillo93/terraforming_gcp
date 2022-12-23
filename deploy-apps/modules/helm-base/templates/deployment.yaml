@@ -15,6 +15,7 @@ spec:
       labels:
         app: {{ .Values.app.name }}
         group: {{ .Values.app.group }}
+        {{ include "common.labels" . | indent 4 }}
     spec:
       containers:
         - name: {{ .Values.app.name }}
