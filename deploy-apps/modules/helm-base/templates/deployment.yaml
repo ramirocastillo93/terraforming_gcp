@@ -6,10 +6,10 @@ metadata:
     app: {{ .Values.app.name }}
     group: {{ .Values.app.group }}
 spec:
-  replicas: {{ .Values.app.replicaCount }}
   selector:
     matchLabels:
       app: {{ .Values.app.name }}
+  replicas: {{ .Values.app.replicaCount }}
   template:
     metadata:
       labels:
@@ -17,6 +17,8 @@ spec:
         group: {{ .Values.app.group }}
         {{ include "common.labels" . | indent 4 }}
     spec:
+      serviceAccountName: {{ if .Values.app.serviceAccountName | default "" }}
+      terminationGracePeriodSeconds: {{ if .Values.app.terminationGracePeriodSeconds | default "" }}
       containers:
         - name: {{ .Values.app.name }}
           image: {{ .Values.app.container.image }}  
@@ -32,3 +34,18 @@ spec:
             - name: {{ .key}}
               value: {{ .value}}
             {{- end}}
+          readinessProbe:
+            periodSeconds: {{ Values.app.readinessProbe.periodSeconds }}
+            exec:
+              command: ["/bin/grpc_health_probe", "-addr=:8080"]
+          livenessProbe:
+            periodSeconds: {{ Values.app.livenessProbe.periodSeconds }}
+            exec:
+              command: ["/bin/grpc_health_probe", "-addr=:8080"]
+          resources:
+            requests:
+              cpu: {{ Values.app.resources.requests.cpu }}
+              memory: {{ Values.app.resources.requests.memory }}
+            limits:
+              cpu: {{ Values.app.resources.limits.cpu }}
+              memory: {{ Values.app.resources.limits.memory }}
