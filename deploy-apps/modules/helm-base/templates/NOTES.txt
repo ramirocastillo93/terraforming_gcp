@@ -1,0 +1,3 @@
+Hola! You have deployed the following release: {{ .Release.Name }}.
+To get further information, you can run the commands:
+  $ helm status {{ .Release.Name }}
