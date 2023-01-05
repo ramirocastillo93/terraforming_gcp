@@ -5,6 +5,7 @@ metadata:
   labels:
     app: {{ .Values.app.name }}
     group: {{ .Values.app.group }}
+    {{ include "common.labels" . | indent 4 }}
 spec:
   selector:
     matchLabels:
