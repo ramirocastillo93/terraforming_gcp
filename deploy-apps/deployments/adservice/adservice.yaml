@@ -4,11 +4,32 @@ app:
   replicaCount: 1
   container:
     image: gcr.io/google-samples/microservices-demo/adservice:v0.5.0
-    port: 7070
+    port: 9555
     config: []
     env:
-       - key: key
-         value: value
+       - key: PORT
+         value: 9555
+       - key: DISABLE_PROFILER
+         value: 1
+       - key: ENV
+         value: dev
   service:
     type: ClusterIP
-    port: 7070
+    port: 9555
+  serviceAccountName: default
+  terminationGracePeriodSeconds: 5
+  resources:
+    requests:
+      cpu: 200m
+      memory: 180Mi
+    limits:
+      cpu: 300m
+      memory: 300Mi
+  readinessProbe:
+    initialDelaySeconds: 20
+    periodSeconds: 15
+    command: ["/bin/grpc_health_probe", "-addr=:9555"]
+  livenessProbe:
+    initialDelaySeconds: 20
+    periodSeconds: 15
+    command: ["/bin/grpc_health_probe", "-addr=:9555"]
