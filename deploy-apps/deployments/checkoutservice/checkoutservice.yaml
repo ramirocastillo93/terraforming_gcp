@@ -1,15 +1,46 @@
-
+env: dev
 app:
-  name: adservice
+  name: checkoutservice
   group: app
   replicaCount: 1
   container:
-    image: gcr.io/google-samples/microservices-demo/adservice:v0.5.0
-    port: 9555
+    name: server
+    image: gcr.io/google-samples/microservices-demo/checkoutservice:v0.5.0
+    port: 5050
     config: []
     env:
-       - key: key
-         value: value
+      - name: PORT
+        value: "5050"
+      - name: PRODUCT_CATALOG_SERVICE_ADDR
+        value: "productcatalogservice:3550"
+      - name: SHIPPING_SERVICE_ADDR
+        value: "shippingservice:50051"
+      - name: PAYMENT_SERVICE_ADDR
+        value: "paymentservice:50051"
+      - name: EMAIL_SERVICE_ADDR
+        value: "emailservice:5000"
+      - name: CURRENCY_SERVICE_ADDR
+        value: "currencyservice:7000"
+      - name: CART_SERVICE_ADDR
+        value: "cartservice:7070"
   service:
+    name: grpc
     type: ClusterIP
-    port: 9555
+    port: 5050
+  serviceAccountName: default
+  terminationGracePeriodSeconds: 5
+  resources:
+    requests:
+      cpu: 100m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+  readinessProbe:
+    initialDelaySeconds: 20
+    periodSeconds: 15
+    command: ["/bin/grpc_health_probe", "-addr=:5050"]
+  livenessProbe:
+    initialDelaySeconds: 20
+    periodSeconds: 15
+    command: ["/bin/grpc_health_probe", "-addr=:5050"]

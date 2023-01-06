@@ -1,0 +1,36 @@
+env: dev
+app:
+  name: shippingservice
+  group: app
+  replicaCount: 1
+  container:
+    name: server
+    image: gcr.io/google-samples/microservices-demo/recommendationservice:v0.5.0
+    port: 50051
+    config: []
+    env:
+    - name: PORT
+      value: "50051"
+    - name: DISABLE_PROFILER
+      value: "1"
+  service:
+    name: grpc
+    type: ClusterIP
+    port: 50051
+  serviceAccountName: default
+  terminationGracePeriodSeconds: 5
+  resources:
+    requests:
+      cpu: 100m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+  readinessProbe:
+    initialDelaySeconds: 20
+    periodSeconds: 15
+    command: ["/bin/grpc_health_probe", "-addr=:50051"]
+  livenessProbe:
+    initialDelaySeconds: 20
+    periodSeconds: 15
+    command: ["/bin/grpc_health_probe", "-addr=:50051"]

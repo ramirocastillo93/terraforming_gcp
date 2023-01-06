@@ -21,8 +21,9 @@ spec:
       serviceAccountName: {{ if .Values.app.serviceAccountName | default "" }}
       terminationGracePeriodSeconds: {{ if .Values.app.terminationGracePeriodSeconds | default "" }}
       containers:
-        - name: {{ .Values.app.name }}
+        - name: {{ .Values.app.container.name }}
           image: {{ .Values.app.container.image }}  
+          imagePullPolicy: Always
           ports:
             - containerPort: {{ .Values.app.container.port }}
           envFrom:
@@ -36,17 +37,17 @@ spec:
               value: {{ .value}}
             {{- end}}
           readinessProbe:
-            periodSeconds: {{ Values.app.readinessProbe.periodSeconds }}
+            periodSeconds: {{ .Values.app.readinessProbe.periodSeconds }}
             exec:
-              command: ["/bin/grpc_health_probe", "-addr=:8080"]
+              command: {{ .Values.app.readinessProbe.command }}
           livenessProbe:
-            periodSeconds: {{ Values.app.livenessProbe.periodSeconds }}
+            periodSeconds: {{ .Values.app.livenessProbe.periodSeconds }}
             exec:
-              command: ["/bin/grpc_health_probe", "-addr=:8080"]
+              command: {{ .Values.app.livenessProbe.command }}
           resources:
             requests:
-              cpu: {{ Values.app.resources.requests.cpu }}
-              memory: {{ Values.app.resources.requests.memory }}
+              cpu: {{ .Values.app.resources.requests.cpu }}
+              memory: {{ .Values.app.resources.requests.memory }}
             limits:
-              cpu: {{ Values.app.resources.limits.cpu }}
-              memory: {{ Values.app.resources.limits.memory }}
+              cpu: {{ .Values.app.resources.limits.cpu }}
+              memory: {{ .Values.app.resources.limits.memory }}

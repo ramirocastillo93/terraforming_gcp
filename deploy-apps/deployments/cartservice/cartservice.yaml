@@ -1,14 +1,36 @@
+env: dev
 app:
   name: cartservice
   group: app
   replicaCount: 1
   container:
+    name: server
     image: gcr.io/google-samples/microservices-demo/cartservice:v0.5.0
     port: 7070
     config: []
     env:
-       - key: key
-         value: value
+       - key: REDIS_ADDR
+         value: "redis-cart:6379"
+       - key: ENV
+         value: dev
   service:
+    name: grpc
     type: ClusterIP
-    port: 7070
+    port: 9555
+  serviceAccountName: default
+  terminationGracePeriodSeconds: 5
+  resources:
+    requests:
+      cpu: 200m
+      memory: 64Mi
+    limits:
+      cpu: 300m
+      memory: 128Mi
+  readinessProbe:
+    initialDelaySeconds: 15
+    periodSeconds: 10
+    command: ["/bin/grpc_health_probe", "-addr=:7070", "-rpc-timeout=5s"]
+  livenessProbe:
+    initialDelaySeconds: 15
+    periodSeconds: 10
+    command: ["/bin/grpc_health_probe", "-addr=:7070", "-rpc-timeout=5s"]
