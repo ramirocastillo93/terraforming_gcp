@@ -5,7 +5,7 @@ metadata:
   labels:
     app: {{ .Values.app.name }}
     group: {{ .Values.app.group }}
-    {{ include "common.labels" . | indent 4 }}
+    {{ include "common.labels" . }}
 spec:
   selector:
     matchLabels:
@@ -16,10 +16,10 @@ spec:
       labels:
         app: {{ .Values.app.name }}
         group: {{ .Values.app.group }}
-        {{ include "common.labels" . | indent 4 }}
+        {{ include "common.labels" . }}
     spec:
-      serviceAccountName: {{ if .Values.app.serviceAccountName | default "" }}
-      terminationGracePeriodSeconds: {{ if .Values.app.terminationGracePeriodSeconds | default "" }}
+      serviceAccountName: {{ .Values.app.serviceAccountName }}
+      terminationGracePeriodSeconds: {{ .Values.app.terminationGracePeriodSeconds }}
       containers:
         - name: {{ .Values.app.container.name }}
           image: {{ .Values.app.container.image }}  
