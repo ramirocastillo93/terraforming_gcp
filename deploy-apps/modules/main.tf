@@ -1,5 +1,5 @@
 resource "helm_release" "application" {
-  name  = "application"
+  name  = "${var.app_name}-app"
   chart = "${path.module}/helm-base"
 
   values = [

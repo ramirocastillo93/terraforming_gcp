@@ -3,8 +3,8 @@ project_id = "developing-stuff"
 region = "us-east4"
 
 gke_num_nodes = {
-  max = 2
-  min = 1
+  max = 10
+  min = 4
 }
 
 gke_preemptible = true
@@ -15,9 +15,9 @@ gke_subnet_ip_cidr_range = "10.51.0.0/20"
 
 gke_cluster_autoscaling = {
   enabled        = true
-  cpu_minimum    = 1
-  cpu_maximum    = 4
-  memory_minimum = 4
+  cpu_minimum    = 4
+  cpu_maximum    = 8
+  memory_minimum = 8
   memory_maximum = 16
 }
 
