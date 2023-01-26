@@ -15,6 +15,6 @@ terraform {
   }
   backend "gcs" {
     bucket = "terraforming_gke"
-    prefix = "cartservice_state"
+    prefix = "adservice_state"
   }
 }

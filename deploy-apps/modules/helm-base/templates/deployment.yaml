@@ -5,7 +5,7 @@ metadata:
   labels:
     app: {{ .Values.app.name }}
     group: {{ .Values.app.group }}
-    {{ include "common.labels" . }}
+    {{ include "common.labels" . | nindent 2}}
 spec:
   selector:
     matchLabels:
@@ -16,7 +16,7 @@ spec:
       labels:
         app: {{ .Values.app.name }}
         group: {{ .Values.app.group }}
-        {{ include "common.labels" . }}
+        {{ include "common.labels" . | nindent 4}}
     spec:
       serviceAccountName: {{ .Values.app.serviceAccountName }}
       terminationGracePeriodSeconds: {{ .Values.app.terminationGracePeriodSeconds }}
@@ -34,7 +34,7 @@ spec:
           env:
             {{- range .Values.app.container.env}}
             - name: {{ .key }}
-              value: {{ .value }}
+              value: {{ .value | quote }}
             {{- end}}
           readinessProbe:
             periodSeconds: {{ .Values.app.readinessProbe.periodSeconds }}
