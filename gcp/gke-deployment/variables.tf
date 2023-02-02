@@ -12,8 +12,8 @@ variable "region" {
 
 variable "gke_num_nodes" {
   default = {
-    min = 1
-    max = 2
+    min = 4
+    max = 10
   }
   description = "Number of GKE nodes"
   type = object({
