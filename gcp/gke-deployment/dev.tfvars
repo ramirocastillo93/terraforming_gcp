@@ -1,6 +1,6 @@
 project_id = "developing-stuff"
 
-region = "us-east4"
+region = "us-central1"
 
 gke_num_nodes = {
   max = 10

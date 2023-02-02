@@ -26,7 +26,7 @@ module "gke" {
     {
       name                     = "${var.cluster_name}-${var.env_name}-node-pool"
       machine_type             = var.gke_machine_type
-      node_locations           = "us-east4-a"
+      node_locations           = "us-central1-a"
       min_count                = var.gke_num_nodes.min
       max_count                = var.gke_num_nodes.max
       preemptible              = var.gke_preemptible
