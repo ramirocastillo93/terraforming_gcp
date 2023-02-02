@@ -5,7 +5,7 @@ app:
   replicaCount: 1
   container:
     name: server
-    image: gcr.io/google-samples/microservices-demo/adservice:v0.5.0
+    image: gcr.io/google-samples/microservices-demo/adservice:latest
     port: 9555
     config: []
     env:
